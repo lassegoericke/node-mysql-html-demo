@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Node + MySQL Demo</title>
+</head>
+<body>
+  <h1>User List</h1>
+  <ul id="userList"></ul>
+
+  <h2>Add User</h2>
+  <input type="text" id="userName" placeholder="Name">
+  <button onclick="addUser()">Add</button>
+
+  <script>
+    async function fetchUsers() {
+      const res = await fetch('/api/users');
+      const users = await res.json();
+      const list = document.getElementById('userList');
+      list.innerHTML = '';
+      users.forEach(user => {
+        const li = document.createElement('li');
+        li.textContent = `${user.id}: ${user.name} `;
+        const del = document.createElement('button');
+        del.textContent = "Delete";
+        del.onclick = () => deleteUser(user.id);
+        li.appendChild(del);
+        list.appendChild(li);
+      });
+    }
+
+    async function addUser() {
+      const name = document.getElementById('userName').value;
+      await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name })
+      });
+      document.getElementById('userName').value = '';
+      fetchUsers();
+    }
+
+    async function deleteUser(id) {
+      await fetch(`/api/users/${id}`, {
+        method: 'DELETE'
+      });
+      fetchUsers();
+    }
+
+    fetchUsers();
+  </script>
+</body>
+</html>
