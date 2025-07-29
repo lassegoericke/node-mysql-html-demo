@@ -25,5 +25,10 @@ services:
       - ./backend:/app
       - /app/node_modules
 
+  adminer:
+    image: adminer
+    ports:
+      - "8080:8080"
+
 volumes:
   db_data:
